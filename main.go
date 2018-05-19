@@ -19,9 +19,10 @@ func main() {
 	}
 
 	config := parseConfig(*cli.ConfigPath)
+	log.Printf("Got config: %+v", config)
 
 	log.Println("Initializing SQL connection")
-	url := config.Mysql["user"] + ":" + config.Mysql["password"] + "@tcp(" + config.Mysql["host"] + ":" + config.Mysql["port"] + ")/" + config.Mysql["oauthTable"] + "?parseTime=true"
+	url := config.Mysql.User + ":" + config.Mysql.Password + "@tcp(" + config.Mysql.Host + ":" + config.Mysql.Port + ")/" + config.Mysql.OauthTable + "?parseTime=true"
 
 	db, err := sql.Open("mysql", url)
 	if err != nil {
@@ -33,9 +34,15 @@ func main() {
 	cfg.AllowClientSecretInParams = true
 
 	log.Println("Starting OAuth...")
-	ldapAuthenticator := ldap.NewLDAPAuthenticator(config.Ldap["bindDn"], config.Ldap["bindPassword"], config.Ldap["queryDn"])
-	ldapAuthenticator.Connect(config.Ldap["bindUrl"])
-	oauthServer := mauth.NewOAuthServer(db, config.Mysql["oauthSchemaPrefix"], cfg, ldapAuthenticator, handleLoginLanding)
+	selectors := []string{"mail", "createTimestamp", "entryUUID", "cn"}
+	transformer := LDAPTransformer{}
+	ldapAuthenticator := ldap.NewLDAPAuthenticator(config.Ldap.BindDn, config.Ldap.BindPassword, config.Ldap.QueryDn, selectors, transformer)
+	err = ldapAuthenticator.Connect(config.Ldap.BindUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	oauthServer := mauth.NewOAuthServer(db, config.Mysql.OauthSchemaPrefix, cfg, &ldapAuthenticator, handleLoginLanding)
 
 	if *cli.StartServer {
 		startServer(&oauthServer)

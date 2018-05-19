@@ -6,9 +6,25 @@ import (
 	"log"
 )
 
+type MysqlConfig struct {
+	OauthTable        string
+	OauthSchemaPrefix string
+	Host              string
+	Port              string
+	User              string
+	Password          string
+}
+
+type LdapConfig struct {
+	BindDn       string
+	BindPassword string
+	BindUrl      string
+	QueryDn      string
+}
+
 type config struct {
-	Ldap  map[string]string
-	Mysql map[string]string
+	Ldap  LdapConfig
+	Mysql MysqlConfig
 }
 
 func parseConfig(path string) (cfg config) {
