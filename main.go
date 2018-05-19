@@ -19,7 +19,6 @@ func main() {
 	}
 
 	config := parseConfig(*cli.ConfigPath)
-	log.Printf("Got config: %+v", config)
 
 	log.Println("Initializing SQL connection")
 	url := config.Mysql.User + ":" + config.Mysql.Password + "@tcp(" + config.Mysql.Host + ":" + config.Mysql.Port + ")/" + config.Mysql.OauthTable + "?parseTime=true"
