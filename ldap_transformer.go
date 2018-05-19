@@ -3,7 +3,6 @@ package main
 import (
 	ldap "github.com/zonradkuse/go-ldap-authenticator"
 
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
