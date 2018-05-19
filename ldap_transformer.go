@@ -13,9 +13,8 @@ type LDAPTransformer struct{}
 
 func (this LDAPTransformer) Transform(entry *ldap.Entry) interface{} {
 	user := NewUserData()
-	log.Printf("%+v", entry)
+
 	for _, attr := range entry.Attributes {
-		log.Printf("%+v", *attr)
 		if attr.Name == "mail" {
 			user.Email = attr.Values[0]
 		}
