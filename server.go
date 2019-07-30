@@ -19,7 +19,7 @@ const (
 	WEB_PATH_INFO        = "/api/v4/user"
 )
 
-func startServer(server *mauth.OAuthServer) {
+func startServer(server *mauth.Server) {
 	log.Println("Starting Webservice...")
 	r := mux.NewRouter()
 	r.PathPrefix(WEB_PATH_STATIC).Handler(http.StripPrefix(WEB_PATH_STATIC, http.FileServer(http.Dir(LOCAL_PATH_STATIC))))

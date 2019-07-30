@@ -35,13 +35,13 @@ func main() {
 	log.Println("Starting OAuth...")
 	selectors := []string{"mail", "createTimestamp", "entryUUID", "cn"}
 	transformer := LDAPTransformer{}
-	ldapAuthenticator := ldap.NewLDAPAuthenticator(config.Ldap.BindDn, config.Ldap.BindPassword, config.Ldap.QueryDn, selectors, transformer)
+	ldapAuthenticator := ldap.NewAuthenticator(config.Ldap.BindDn, config.Ldap.BindPassword, config.Ldap.QueryDn, selectors, transformer)
 	err = ldapAuthenticator.Connect(config.Ldap.BindUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	oauthServer := mauth.NewOAuthServer(db, config.Mysql.OauthSchemaPrefix, cfg, &ldapAuthenticator, handleLoginLanding)
+	oauthServer := mauth.NewServer(db, config.Mysql.OauthSchemaPrefix, cfg, &ldapAuthenticator, handleLoginLanding)
 
 	if *cli.StartServer {
 		startServer(&oauthServer)
